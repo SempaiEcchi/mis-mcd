@@ -30,8 +30,8 @@ def train(episodes=500, seed=0):
 
         agent.update_epsilon()
 
-        avg_wait = (env.total_wait / env.served_orders) if env.served_orders > 0 else 0.0
-        print(f"Episode {ep:03d}: served_orders={env.served_orders}, avg_wait={avg_wait:.3f} min, steps={steps}")
+        avg_wait = (env.total_wait_people / env.served_people) if env.served_people > 0 else 0.0
+        print(f"Episode {ep:03d}: served_orders={env.served_orders}, avg_wait_per_person={avg_wait:.3f} min, steps={steps}")
 
     try:
         agent.save('models/fastdqn_final.npz')
@@ -40,4 +40,4 @@ def train(episodes=500, seed=0):
         print('Failed to save final model:', e)
 
 if __name__ == '__main__':
-    train(episodes=1000)
+    train(episodes=300)

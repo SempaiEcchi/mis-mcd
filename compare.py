@@ -54,7 +54,7 @@ def run_episode(env, policy, agent=None, seed=None, max_steps=2000):
 
         steps += 1
 
-    avg_wait = (env.total_wait / env.served_orders) if env.served_orders > 0 else 0.0
+    avg_wait = (env.total_wait_people / env.served_people) if env.served_people > 0 else 0.0
     rejected = getattr(env, 'rejected_orders', 0)
     return avg_wait, env.served_orders, rejected
 
@@ -77,6 +77,7 @@ def evaluate(policies=('fcfs', 'spt', 'rl'), episodes=200, seed=0):
     for p in policies:
         for ep in range(episodes):
             avg_wait, nserved, nrej = run_episode(env, p, agent=agent if p == 'rl' else None, seed=seed+ep)
+
             results[p].append(avg_wait)
             served[p].append(nserved)
             rejected[p].append(nrej)
@@ -86,12 +87,14 @@ def evaluate(policies=('fcfs', 'spt', 'rl'), episodes=200, seed=0):
     data = [results[p] for p in labels]
     plt.figure(figsize=(8, 5))
     plt.boxplot(data, labels=labels, showmeans=True)
-    plt.ylabel('Average wait per order (minutes)')
+    plt.ylabel('Average wait per person (minutes)')
     plt.title(f'Policy comparison (n={episodes})')
     plt.tight_layout()
     out1 = os.path.join(RESULTS_DIR, 'policy_boxplot.png')
     plt.savefig(out1)
     print('Saved', out1)
+
+
 
 
     for p in labels:
@@ -101,4 +104,4 @@ def evaluate(policies=('fcfs', 'spt', 'rl'), episodes=200, seed=0):
 
 
 if __name__ == '__main__':
-    evaluate(policies=('fcfs', 'spt', 'rl'), episodes=600)
+    evaluate(policies=('fcfs', 'spt', 'rl'), episodes=300)
