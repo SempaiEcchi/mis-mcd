@@ -1,4 +1,4 @@
-# Leo Radočaj
+# Leo Radočaj , 0303094823
 
 # Projekt raspoređivanja narudžbi u restoranu (McDonalds)
 
@@ -28,6 +28,28 @@ Svaka 2 sata simulacije, sljedećih sat vremena je "rush hour" s 50% više narud
     - **SPT**: Poslužuje narudžbu s najkraćim očekivanim ukupnim vremenom posluživanja.
     - **RL**: Koristi istreniranog DQN agenta za odabir koje će se narudžbe poslužiti sljedeće.
 3. **Trening**: RL agent se trenira kroz mnogo epizoda kako bi minimizirao vrijeme čekanja, koristeći nagradu oblikovanu tako da potiče ponašanje slično SPT-u.
+
+**Reward** u ovom okruženju oblikovan je tako da potiče minimiziranje vremena čekanja, uz dodatne penalizacije i bonuse. U `env.py`, nagrada se računa prema sljedećim komponentama:
+
+**Glavna komponenta:**
+- `2.0 * (spt_wait - wait_per_order)`
+  - Potiče agenta da smanji vrijeme čekanja u odnosu na SPT strategiju.
+
+**Penalizacije:**
+- `-0.5 * wait_per_order`
+  - Dodatno penalizira dulje čekanje narudžbe.
+- `-0.05 * people_waiting`
+  - Veći broj ljudi u redu povećava penalizaciju.
+
+**Bonus:**
+- `+0.2 * (order.num_people - 1)`
+  - Nagrada je veća za posluživanje narudžbi s više osoba.
+
+**Clipping:**
+- Nagrada se ograničava između -5 i 5:
+  - `reward = np.clip(reward, -5, 5)`
+
+ 
 4. **Evaluacija**: Nakon treninga, sve tri strategije se pokreću kroz mnogo epizoda. Prosječna vremena čekanja i broj posluženih narudžbi i osoba se bilježe i vizualiziraju.
 
 ## Izlaz
